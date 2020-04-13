@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Table</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <th>name</th>
+            <th>session</th>
+            <th>session_start_end</th>
+            <th>code</th>
+            <th>products</th>
+        </tr>
+        {% if client_list %}
+            {% for client in client_list %}
+                <tr>
+                    <td>{{ client.name }}</td>
+                    <td>{{ client.session }}</td>
+                    <td>{{ client.session_start_end }}</td>
+                    <td>{{ client.code }}</td>
+                    <td>{{ client.products }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</body>
+</html>
