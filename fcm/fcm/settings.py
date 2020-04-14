@@ -83,6 +83,14 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': '',
         'POST': '',
+    },
+    'limit': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fcmdb',
+        'USER': os.environ.get('DB_USER2'),
+        'PASSWORD': os.environ.get('DB_PASSWORD2'),
+        'HOST': '',
+        'POST': '3306',
     }
 }
 

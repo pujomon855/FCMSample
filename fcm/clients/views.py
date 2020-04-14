@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from django.views import generic
 
-from .models import Code, Client, Session, CodeSessionProduct
+from .models import Code, Client, ClientLimit, Session, CodeSessionProduct
 
 
 class IndexView(generic.TemplateView):
@@ -33,3 +33,23 @@ class ClientTableView(generic.ListView):
             record = ClientTableRecord(client.name, session, session_start_end, code, products)
             client_records.append(record)
         return client_records
+
+
+class ClientDetailView(generic.DetailView):
+    model = Client
+    template_name = 'clients/detail.html'
+    client = None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if queryset:
+            self.client = queryset[0]
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        limits = []
+        if self.client:
+            limits = ClientLimit.objects.using('limit').filter(client_id=self.client.client_id)
+        context['limits'] = limits
+        return context

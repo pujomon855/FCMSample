@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Detail</title>
+</head>
+<body>
+    <h3>{{ client.name }}</h3>
+
+    <table border="1">
+        <tr>
+            <th>Product</th>
+            <th>HandlInst</th>
+            <th>LimitType</th>
+            <th>OrderLimit</th>
+        </tr>
+        {% if limits %}
+            {% for limit in limits %}
+                <tr>
+                    <td>{{ limit.product }}</td>
+                    <td>{{ limit.handlinst }}</td>
+                    <td>{{ limit.limit_type }}</td>
+                    <td>{{ limit.order_limit }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</body>
+</html>

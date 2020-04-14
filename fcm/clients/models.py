@@ -79,3 +79,20 @@ class CodeSessionProduct(models.Model):
 
     def __str__(self):
         return f'{self.code}, {self.session}, {self.product}, {self.handlinst}'
+
+
+class ClientLimit(models.Model):
+    client_id = models.CharField(primary_key=True, max_length=20)
+    product = models.CharField(max_length=20)
+    handlinst = models.CharField(max_length=5)
+    limit_type = models.CharField(max_length=1)
+    order_limit = models.IntegerField(blank=True, null=True)
+    type1 = models.CharField(max_length=5, blank=True, null=True)
+    type2 = models.CharField(max_length=5, blank=True, null=True)
+    type3 = models.CharField(max_length=5, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'ClientLimit'
+        unique_together = (('client_id', 'product', 'handlinst', 'limit_type'),)
+

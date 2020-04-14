@@ -10,4 +10,6 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     # ex: /clients/table/
     path('table/', views.ClientTableView.as_view(), name='table'),
+    # ex: /clients/3/
+    path('<int:pk>/', views.ClientDetailView.as_view(), name='detail'),
 ]
