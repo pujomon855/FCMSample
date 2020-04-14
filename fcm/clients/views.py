@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from django.shortcuts import render
 from django.views import generic
 
 from .models import Code, Client, Session, CodeSessionProduct
@@ -34,4 +33,3 @@ class ClientTableView(generic.ListView):
             record = ClientTableRecord(client.name, session, session_start_end, code, products)
             client_records.append(record)
         return client_records
-
