@@ -29,7 +29,7 @@ class ClientTableView(generic.ListView):
             session_start_end = '-'.join((str(session.start_time), str(session.end_time)))
             code = Code.objects.get(id=client.code.id)
             csp_list = CodeSessionProduct.objects.filter(code=code).filter(session=session)
-            products = ', '.join([csp.product.name for csp in csp_list])
+            products = ', '.join([f'{csp.product}({csp.handlinst})' for csp in csp_list])
             record = ClientTableRecord(client.name, session, session_start_end, code, products)
             client_records.append(record)
         return client_records

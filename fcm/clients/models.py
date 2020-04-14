@@ -28,6 +28,15 @@ class Client(models.Model):
     name = models.CharField(max_length=30)
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     code = models.ForeignKey(Code, on_delete=models.PROTECT)
+    client_id = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class HandlInst(models.Model):
+    name = models.CharField(max_length=5)
+    value = models.IntegerField()
 
     def __str__(self):
         return self.name
@@ -36,6 +45,10 @@ class Client(models.Model):
 class SessionProduct(models.Model):
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    handlinst = models.ForeignKey(HandlInst, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f'{self.session}: {self.product}, {self.handlinst}'
 
 
 class Logic(models.Model):
@@ -55,10 +68,14 @@ class CodeSessionLogic(models.Model):
     ])
 
     def __str__(self):
-        return self.code
+        return f'{self.session}, {self.code}, {self.in_out}, {self.logic}'
 
 
 class CodeSessionProduct(models.Model):
     code = models.ForeignKey(Code, on_delete=models.PROTECT)
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    handlinst = models.ForeignKey(HandlInst, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f'{self.code}, {self.session}, {self.product}, {self.handlinst}'
