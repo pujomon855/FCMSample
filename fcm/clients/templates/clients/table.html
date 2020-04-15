@@ -16,7 +16,7 @@
         {% if client_list %}
             {% for client in client_list %}
                 <tr>
-                    <td>{{ client.name }}</td>
+                    <td><a href="{% url 'clients:detail' client.id %}">{{ client.name }}</a></td>
                     <td>{{ client.session }}</td>
                     <td>{{ client.session_start_end }}</td>
                     <td>{{ client.code }}</td>

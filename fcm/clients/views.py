@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
 from .models import Code, Client, ClientLimit, Session, CodeSessionProduct
@@ -10,6 +11,7 @@ class IndexView(generic.TemplateView):
 
 @dataclass
 class ClientTableRecord:
+    id: int
     name: str
     session: str
     session_start_end: str
@@ -30,26 +32,14 @@ class ClientTableView(generic.ListView):
             code = Code.objects.get(id=client.code.id)
             csp_list = CodeSessionProduct.objects.filter(code=code).filter(session=session)
             products = ', '.join([f'{csp.product}({csp.handlinst})' for csp in csp_list])
-            record = ClientTableRecord(client.name, session, session_start_end, code, products)
+            record = ClientTableRecord(client.id, client.name, session, session_start_end, code, products)
             client_records.append(record)
         return client_records
 
 
-class ClientDetailView(generic.DetailView):
-    model = Client
-    template_name = 'clients/detail.html'
-    client = None
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if queryset:
-            self.client = queryset[0]
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        limits = []
-        if self.client:
-            limits = ClientLimit.objects.using('limit').filter(client_id=self.client.client_id)
-        context['limits'] = limits
-        return context
+def show_detail(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    limits = ClientLimit.objects.using('limit').filter(client_id=client.client_id)
+    return render(request, 'clients/detail.html', {
+        'client': client, 'limits': limits
+    })
