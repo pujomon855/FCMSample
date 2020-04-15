@@ -24,9 +24,16 @@ class Session(models.Model):
         return self.name
 
 
+class CodeSession(models.Model):
+    code = models.ForeignKey(Code, on_delete=models.PROTECT)
+    session = models.ForeignKey(Session, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f'{self.code}, {self.session}'
+
+
 class Client(models.Model):
     name = models.CharField(max_length=30)
-    session = models.ForeignKey(Session, on_delete=models.PROTECT)
     code = models.ForeignKey(Code, on_delete=models.PROTECT)
     client_id = models.CharField(max_length=20)
 
@@ -95,4 +102,3 @@ class ClientLimit(models.Model):
         managed = False
         db_table = 'ClientLimit'
         unique_together = (('client_id', 'product', 'handlinst', 'limit_type'),)
-

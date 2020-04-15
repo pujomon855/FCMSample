@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
-from .models import Code, Client, ClientLimit, Session, CodeSessionProduct
+from .models import Code, CodeSession, Client, ClientLimit, CodeSessionProduct
 
 
 class IndexView(generic.TemplateView):
@@ -27,13 +27,16 @@ class ClientTableView(generic.ListView):
         clients = Client.objects.order_by('name')
         client_records = []
         for client in clients:
-            session = Session.objects.get(id=client.session.id)
-            session_start_end = '-'.join((str(session.start_time), str(session.end_time)))
-            code = Code.objects.get(id=client.code.id)
-            csp_list = CodeSessionProduct.objects.filter(code=code).filter(session=session)
-            products = ', '.join([f'{csp.product}({csp.handlinst})' for csp in csp_list])
-            record = ClientTableRecord(client.id, client.name, session, session_start_end, code, products)
-            client_records.append(record)
+            codes = Code.objects.filter(id=client.code.id)
+            for code in codes:
+                code_sessions = CodeSession.objects.filter(code=code)
+                for code_session in code_sessions:
+                    session = code_session.session
+                    session_start_end = '-'.join((str(session.start_time), str(session.end_time)))
+                    csp_list = CodeSessionProduct.objects.filter(code=code).filter(session=session)
+                    products = ', '.join([f'{csp.product}({csp.handlinst})' for csp in csp_list])
+                    record = ClientTableRecord(client.id, client.name, session, session_start_end, code, products)
+                    client_records.append(record)
         return client_records
 
 
