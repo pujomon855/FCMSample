@@ -1,13 +1,6 @@
 from django.db import models
 
 
-class Code(models.Model):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
-
-
 class Product(models.Model):
     name = models.CharField(max_length=20)
 
@@ -24,17 +17,8 @@ class Session(models.Model):
         return self.name
 
 
-class CodeSession(models.Model):
-    code = models.ForeignKey(Code, on_delete=models.PROTECT)
-    session = models.ForeignKey(Session, on_delete=models.PROTECT)
-
-    def __str__(self):
-        return f'{self.code}, {self.session}'
-
-
 class Client(models.Model):
     name = models.CharField(max_length=30)
-    code = models.ForeignKey(Code, on_delete=models.PROTECT)
     client_id = models.CharField(max_length=20)
 
     def __str__(self):
@@ -47,6 +31,22 @@ class HandlInst(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Code(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class CodeSession(models.Model):
+    code = models.ForeignKey(Code, on_delete=models.PROTECT)
+    session = models.ForeignKey(Session, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f'{self.code}, {self.session}'
 
 
 class SessionProduct(models.Model):

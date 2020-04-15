@@ -27,7 +27,7 @@ class ClientTableView(generic.ListView):
         clients = Client.objects.order_by('name')
         client_records = []
         for client in clients:
-            codes = Code.objects.filter(id=client.code.id)
+            codes = Code.objects.filter(client=client)
             for code in codes:
                 code_sessions = CodeSession.objects.filter(code=code)
                 for code_session in code_sessions:
