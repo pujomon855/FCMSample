@@ -12,6 +12,7 @@ class ClientAdmin(admin.ModelAdmin):
         (None, {'fields': ['name', 'client_id']}),
     ]
     inlines = [CodeInLine]
+    search_fields = ['name']
 
 
 admin.site.register(Client, ClientAdmin)
@@ -35,6 +36,7 @@ class SessionAdmin(admin.ModelAdmin):
         ('Time information', {'fields': ['start_time', 'end_time']}),
     ]
     inlines = [CodeSessionInLine, SessionProductInLine, CodeSessionProductInLine]
+    search_fields = ['name']
 
 
 admin.site.register(Session, SessionAdmin)
