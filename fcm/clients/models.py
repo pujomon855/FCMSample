@@ -35,10 +35,11 @@ class HandlInst(models.Model):
 class ClientClassifier(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     identifier = models.CharField(max_length=20)
+    view = models.CharField(max_length=20)
     code = models.CharField(max_length=20)
 
     def __str__(self):
-        return f'{self.client}: {self.identifier}, {self.code}'
+        return f'{self.client}: {self.identifier}, {self.view}, {self.code}'
 
 
 class CodeSession(models.Model):

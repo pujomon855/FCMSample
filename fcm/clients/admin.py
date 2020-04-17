@@ -5,6 +5,10 @@ from .models import Client, ClientClassifier, CodeSession, TradeType, HandlInst,
 
 class ClientClassifierInLine(admin.StackedInline):
     model = ClientClassifier
+    fieldsets = [
+        (None, {'fields': (('identifier', 'view', 'code'),)}),
+    ]
+    extra = 1
 
 
 class ClientAdmin(admin.ModelAdmin):
@@ -13,6 +17,7 @@ class ClientAdmin(admin.ModelAdmin):
     ]
     inlines = [ClientClassifierInLine]
     search_fields = ['name']
+    ordering = ['name']
 
 
 admin.site.register(Client, ClientAdmin)
