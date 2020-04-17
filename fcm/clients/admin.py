@@ -1,17 +1,17 @@
 from django.contrib import admin
 
-from .models import Client, Code, CodeSession, CodeSessionProduct, HandlInst, Product, Session, SessionProduct
+from .models import Client, ClientClassifier, CodeSession, TradeType, HandlInst, Product, Session
 
 
-class CodeInLine(admin.StackedInline):
-    model = Code
+class ClientClassifierInLine(admin.StackedInline):
+    model = ClientClassifier
 
 
 class ClientAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'client_id']}),
+        (None, {'fields': ['name']}),
     ]
-    inlines = [CodeInLine]
+    inlines = [ClientClassifierInLine]
     search_fields = ['name']
 
 
@@ -22,12 +22,8 @@ class CodeSessionInLine(admin.TabularInline):
     model = CodeSession
 
 
-class SessionProductInLine(admin.TabularInline):
-    model = SessionProduct
-
-
-class CodeSessionProductInLine(admin.TabularInline):
-    model = CodeSessionProduct
+class TradeTypeInLine(admin.TabularInline):
+    model = TradeType
 
 
 class SessionAdmin(admin.ModelAdmin):
@@ -35,7 +31,7 @@ class SessionAdmin(admin.ModelAdmin):
         (None, {'fields': ['name']}),
         ('Time information', {'fields': ['start_time', 'end_time']}),
     ]
-    inlines = [CodeSessionInLine, SessionProductInLine, CodeSessionProductInLine]
+    inlines = [CodeSessionInLine, TradeTypeInLine]
     search_fields = ['name']
 
 
