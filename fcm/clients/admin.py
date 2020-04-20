@@ -9,6 +9,7 @@ class ClientClassifierInLine(admin.StackedInline):
         (None, {'fields': (('identifier', 'view', 'code'),)}),
     ]
     extra = 1
+    template = 'admin/clients/clientclassifier/edit_inline/stacked.html'
 
 
 class ClientAdmin(admin.ModelAdmin):
