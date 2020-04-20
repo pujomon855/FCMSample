@@ -94,3 +94,19 @@ class ClientLimit(models.Model):
         managed = False
         db_table = 'ClientLimit'
         unique_together = (('client_id', 'product', 'handlinst', 'limit_type'),)
+
+
+class ClientView(models.Model):
+    client_id = models.CharField(primary_key=True, max_length=20)
+    product = models.CharField(max_length=20)
+    handlinst = models.CharField(max_length=5)
+    limit_type = models.CharField(max_length=1)
+    order_limit = models.IntegerField(blank=True, null=True)
+    is_disc = models.IntegerField(blank=True, null=True)
+    is_dma = models.IntegerField(blank=True, null=True)
+    is_dsa = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Client_View'
+        unique_together = (('client_id', 'product', 'handlinst', 'limit_type'),)

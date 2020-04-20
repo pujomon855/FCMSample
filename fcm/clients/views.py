@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
-from .models import ClientClassifier, CodeSession, Client, ClientLimit, TradeType
+from .models import ClientClassifier, CodeSession, Client, ClientView, TradeType
 
 
 class IndexView(generic.TemplateView):
@@ -44,7 +44,7 @@ def show_detail(request, pk):
     client = get_object_or_404(Client, pk=pk)
     # 暫定的に1つ目のClientClassifier使用
     classifier = client.clientclassifier_set.first()
-    limits = ClientLimit.objects.using('limit').filter(client_id=classifier.identifier)
+    limits = ClientView.objects.using('limit').filter(client_id=classifier.identifier)
     return render(request, 'clients/detail.html', {
         'client': client, 'limits': limits
     })
