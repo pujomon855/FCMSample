@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>FCMSample</title>
-</head>
-<body>
+{% extends 'clients/base.html' %}
+
+{% block title %}FCMSample{% endblock %}
+
+{% block contents %}
     <ul>
         <li><a href="{% url 'clients:table' %}">顧客一覧</a></li>
     </ul>
-</body>
-</html>
+{% endblock %}

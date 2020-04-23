@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Base Title{% endblock %}</title>
+    <script type="text/javascript" src="{% static 'clients/js/vendor/jquery-3.5.0.min.js' %}"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+{% block contents %}{% endblock %}
+</body>
+</html>

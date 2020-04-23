@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Client Table</title>
-</head>
-<body>
+{% extends 'clients/base.html' %}
+
+{% block title %}Client Table{% endblock %}
+
+{% block contents %}
     <table border="1">
         <tr>
             <th>name</th>
@@ -25,5 +23,4 @@
             {% endfor %}
         {% endif %}
     </table>
-</body>
-</html>
+{% endblock %}

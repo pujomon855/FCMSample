@@ -1,11 +1,16 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>Client Detail</title>
-</head>
-<body>
-    <h3>{{ client.name }}</h3>
+{% extends 'clients/base.html' %}
+
+{% block title %}Client Detail{% endblock %}
+
+{% block head %}
+    <script type="text/javascript">
+        'use strict';
+        $(() => $("div#contents-title").css("border", "3px solid green"));
+    </script>
+{% endblock %}
+
+{% block contents %}
+    <div id="contents-title"><h3>{{ client.name }}</h3></div>
 
     <table border="1">
         <tr>
@@ -31,5 +36,4 @@
             {% endfor %}
         {% endif %}
     </table>
-</body>
-</html>
+{% endblock %}
