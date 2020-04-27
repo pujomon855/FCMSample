@@ -5,7 +5,32 @@
 {% block head %}
     <script type="text/javascript">
         'use strict';
-        $(() => $('#client-table').DataTable());
+        $(function() {
+            // Setup - add a text input to each footer cell
+            $('#client-table tfoot th').each(function() {
+                let title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+
+            // DataTable
+            let table = $('#client-table').DataTable();
+
+            // Apply the search
+            table.columns().every(function() {
+                let that = this;
+
+                $('input', this.footer()).on('keyup change clear', function() {
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+
+            // Move the search to header
+            $('#client-table tfoot tr').appendTo('#client-table thead');
+        });
     </script>
 {% endblock %}
 
@@ -33,5 +58,14 @@
                 {% endfor %}
             {% endif %}
         </tbody>
+        <tfoot>
+            <tr>
+                <th>name</th>
+                <th>session</th>
+                <th>session_start_end</th>
+                <th>code</th>
+                <th>products</th>
+            </tr>
+        </tfoot>
     </table>
 {% endblock %}
