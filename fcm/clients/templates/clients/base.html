@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Base Title{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'clients/css/vendor/datatables.min.css' %}"/>
     <script type="text/javascript" src="{% static 'clients/js/vendor/jquery-3.5.0.min.js' %}"></script>
+    <script type="text/javascript" charset="utf8" src="{% static 'clients/js/vendor/datatables.min.js' %}"></script>
     {% block head %}{% endblock %}
 </head>
 <body>
