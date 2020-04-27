@@ -7,33 +7,41 @@
         'use strict';
         $(() => $("div#contents-title").css("border", "3px solid green"));
     </script>
+    <script type="text/javascript">
+        'use strict';
+        $(() => $('#detail-table').DataTable());
+    </script>
 {% endblock %}
 
 {% block contents %}
     <div id="contents-title"><h3>{{ client.name }}</h3></div>
 
-    <table border="1">
-        <tr>
-            <th>Product</th>
-            <th>HandlInst</th>
-            <th>LimitType</th>
-            <th>OrderLimit</th>
-            <th>DISC</th>
-            <th>DMA</th>
-            <th>DSA</th>
-        </tr>
-        {% if limits %}
-            {% for limit in limits %}
-                <tr>
-                    <td>{{ limit.product }}</td>
-                    <td>{{ limit.handlinst }}</td>
-                    <td>{{ limit.limit_type }}</td>
-                    <td>{{ limit.order_limit }}</td>
-                    <td>{% if limit.is_disc %}○{% endif %}</td>
-                    <td>{% if limit.is_dma %}○{% endif %}</td>
-                    <td>{% if limit.is_dsa %}○{% endif %}</td>
-                </tr>
-            {% endfor %}
-        {% endif %}
+    <table id="detail-table" border="1">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>HandlInst</th>
+                <th>LimitType</th>
+                <th>OrderLimit</th>
+                <th>DISC</th>
+                <th>DMA</th>
+                <th>DSA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if limits %}
+                {% for limit in limits %}
+                    <tr>
+                        <td>{{ limit.product }}</td>
+                        <td>{{ limit.handlinst }}</td>
+                        <td>{{ limit.limit_type }}</td>
+                        <td>{{ limit.order_limit }}</td>
+                        <td>{% if limit.is_disc %}○{% endif %}</td>
+                        <td>{% if limit.is_dma %}○{% endif %}</td>
+                        <td>{% if limit.is_dsa %}○{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
     </table>
 {% endblock %}
