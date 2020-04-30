@@ -6,30 +6,33 @@
     <script type="text/javascript">
         'use strict';
         $(function() {
-            // Setup - add a text input to each footer cell
-            $('#client-table tfoot th').each(function() {
-                let title = $(this).text();
-                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
-            });
-
             // DataTable
             let table = $('#client-table').DataTable();
 
-            // Apply the search
+            // Apply the search to every column
+            let searchRow = $('<tr></tr>');
             table.columns().every(function() {
-                let that = this;
+                let title = this.header().innerHTML;
+                let search = $('<input>', {
+                    type: "text",
+                    placeholder: "Search " + title,
+                });
 
-                $('input', this.footer()).on('keyup change clear', function() {
+                let that = this;
+                search.on('keyup change clear', function() {
                     if (that.search() !== this.value) {
                         that
                             .search(this.value)
                             .draw();
                     }
                 });
+
+                // Append to searchRow
+                searchRow.append($('<th></th>').append(search));
             });
 
-            // Move the search to header
-            $('#client-table tfoot tr').appendTo('#client-table thead');
+            // Append searchRow to the top of the header
+            $('#client-table thead').prepend(searchRow);
         });
     </script>
 {% endblock %}
@@ -58,14 +61,5 @@
                 {% endfor %}
             {% endif %}
         </tbody>
-        <tfoot>
-            <tr>
-                <th>name</th>
-                <th>session</th>
-                <th>session_start_end</th>
-                <th>code</th>
-                <th>products</th>
-            </tr>
-        </tfoot>
     </table>
 {% endblock %}
