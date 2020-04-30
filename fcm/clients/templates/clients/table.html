@@ -21,7 +21,7 @@
             let that = this;
             search.on('keyup change clear', function() {
                 // get search method
-                let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() == 'regex');
+                let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() === 'regex');
 
                 if (that.search() !== this.value) {
                     that
