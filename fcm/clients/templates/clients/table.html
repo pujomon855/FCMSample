@@ -3,63 +3,77 @@
 {% block title %}Client Table{% endblock %}
 
 {% block head %}
-    <script type="text/javascript">
-        'use strict';
-        $(function() {
-            // DataTable
-            let table = $('#client-table').DataTable();
+<script type="text/javascript">
+    'use strict';
+    $(function() {
+        // DataTable
+        let table = $('#client-table').DataTable();
 
-            // Apply the search to every column
-            let searchRow = $('<tr></tr>');
-            table.columns().every(function() {
-                let title = this.header().innerHTML;
-                let search = $('<input>', {
-                    type: "text",
-                    placeholder: "Search " + title,
-                });
-
-                let that = this;
-                search.on('keyup change clear', function() {
-                    if (that.search() !== this.value) {
-                        that
-                            .search(this.value)
-                            .draw();
-                    }
-                });
-
-                // Append to searchRow
-                searchRow.append($('<th></th>').append(search));
+        // Apply the search to every column
+        let searchRow = $('<tr></tr>');
+        table.columns().every(function() {
+            let title = this.header().innerHTML;
+            let search = $('<input>', {
+                type: "text",
+                placeholder: "Search " + title,
             });
 
-            // Append searchRow to the top of the header
-            $('#client-table thead').prepend(searchRow);
+            let that = this;
+            search.on('keyup change clear', function() {
+                // get search method
+                let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() == 'regex');
+
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value, isRegex)
+                        .draw();
+                }
+            });
+
+            // Append to searchRow
+            searchRow.append($('<th></th>').append(search));
         });
-    </script>
+
+        // Append searchRow to the top of the header
+        $('#client-table thead').prepend(searchRow);
+    });
+</script>
 {% endblock %}
 
 {% block contents %}
-    <table id="client-table" border="1">
-        <thead>
-            <tr>
-                <th>name</th>
-                <th>session</th>
-                <th>session_start_end</th>
-                <th>code</th>
-                <th>products</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if client_list %}
-                {% for client in client_list %}
-                    <tr>
-                        <td><a href="{% url 'clients:detail' client.id %}">{{ client.name }}</a></td>
-                        <td>{{ client.session }}</td>
-                        <td>{{ client.session_start_end }}</td>
-                        <td>{{ client.code }}</td>
-                        <td>{{ client.products }}</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
-        </tbody>
-    </table>
+<h3>Client Table</h3>
+<div>
+    <div id="search-method">
+        <p>検索方法：
+            <input type="radio" name="searchMethod" value="normal" checked>通常
+            <input type="radio" name="searchMethod" value="regex">正規表現
+        </p>
+    </div>
+    <div>
+        <table id="client-table" border="1">
+            <thead>
+                <tr>
+                    <th>name</th>
+                    <th>session</th>
+                    <th>session_start_end</th>
+                    <th>code</th>
+                    <th>products</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if client_list %}
+                    {% for client in client_list %}
+                        <tr>
+                            <td><a href="{% url 'clients:detail' client.id %}">{{ client.name }}</a></td>
+                            <td>{{ client.session }}</td>
+                            <td>{{ client.session_start_end }}</td>
+                            <td>{{ client.code }}</td>
+                            <td>{{ client.products }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
