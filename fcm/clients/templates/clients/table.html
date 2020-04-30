@@ -7,7 +7,12 @@
     'use strict';
     $(function() {
         // DataTable
-        let table = $('#client-table').DataTable();
+        let table = $('#client-table').DataTable({
+            dom: 'lBfrtip',
+            buttons: [
+                'columnsToggle',
+            ],
+        });
 
         // Apply the search to every column
         let searchRow = $('<tr></tr>');
