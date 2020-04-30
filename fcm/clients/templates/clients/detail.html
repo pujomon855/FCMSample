@@ -5,8 +5,10 @@
 {% block head %}
     <script type="text/javascript">
         'use strict';
-        $(() => $("div#contents-title").css("border", "3px solid green"));
-        $(() => {
+        $(function() {
+            $("div#contents-title").css("border", "3px solid green");
+        });
+        $(function() {
             $('#detail-table th,#detail-table td').hover(
                 function() {$(this).css('background', '#CCFF99')}, // mouse entered
                 function() {$(this).css('background', '')} // mouse leave
@@ -15,7 +17,9 @@
     </script>
     <script type="text/javascript">
         'use strict';
-        $(() => $('#detail-table').DataTable());
+        $(function() {
+            $('#detail-table').DataTable();
+        });
     </script>
 {% endblock %}
 
