@@ -6,41 +6,66 @@
 <script type="text/javascript">
     'use strict';
     $(function() {
-        // DataTable
-        let table = $('#client-table').DataTable({
-            dom: 'lBfrtip',
-            buttons: [
-                'columnsToggle',
-            ],
-        });
-
-        // Apply the search to every column
-        let searchRow = $('<tr></tr>');
-        table.columns().every(function() {
-            let title = this.header().innerHTML;
-            let search = $('<input>', {
-                type: "text",
-                placeholder: "Search " + title,
+        let decorateTable = new Promise(function(resolve, reject) {
+            // DataTable
+            let table = $('#client-table').DataTable({
+                dom: 'lBfrtip',
+                buttons: [
+                    'columnsToggle',
+                ],
             });
 
-            let that = this;
-            search.on('keyup change clear', function() {
-                // get search method
-                let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() === 'regex');
+            // Apply the search to every column
+            let searchRow = $('<tr></tr>');
+            table.columns().every(function() {
+                let title = this.header().innerHTML;
+                let search = $('<input>', {
+                    type: "text",
+                    placeholder: "Search " + title,
+                });
 
-                if (that.search() !== this.value) {
-                    that
-                        .search(this.value, isRegex)
-                        .draw();
-                }
+                let that = this;
+                search.on('keyup change clear', function() {
+                    // get search method
+                    let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() === 'regex');
+
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value, isRegex)
+                            .draw();
+                    }
+                });
+
+                // Append to searchRow
+                searchRow
+                    .append($('<th></th>')
+                        .attr('id', 'search-' + title)
+                        .append(search));
             });
 
-            // Append to searchRow
-            searchRow.append($('<th></th>').append(search));
+            // Append searchRow to the top of the header
+            $('#client-table thead').prepend(searchRow);
+
+            resolve('Table decorated');
         });
 
-        // Append searchRow to the top of the header
-        $('#client-table thead').prepend(searchRow);
+        decorateTable.then(function(result) {
+            // Add event listener to columns toggle buttons to show/hide search row
+            // because this manually created row is not shown/hidden by default buttons action
+            $('div.dt-buttons .buttons-columnVisibility').each(function(idx, elem) {
+                let title = $(elem).text();
+                $(elem)
+                    .on('click', function(event) {
+                        let eventElem = $(event.target);
+                        let tag = eventElem.prop('tagName');
+                        // Clicked element is either button or span inside the button
+                        // But a is used in IE instead of button!
+                        let btn = (tag === 'BUTTON' || tag === 'A') ? eventElem : eventElem.parent('button, a');
+                        let display = btn.hasClass('active') ? '' : 'none';
+                        $('#client-table thead th#search-' + title).css('display', display);
+                    });
+            });
+        });
     });
 </script>
 {% endblock %}
