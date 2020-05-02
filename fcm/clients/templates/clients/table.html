@@ -5,6 +5,11 @@
 {% block head %}
 <script type="text/javascript">
     'use strict';
+
+    function escapeSelectorString(val) {
+        return val.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
+    }
+
     $(function() {
         let decorateTable = new Promise(function(resolve, reject) {
             // DataTable
@@ -62,7 +67,7 @@
                         // But a is used in IE instead of button!
                         let btn = (tag === 'BUTTON' || tag === 'A') ? eventElem : eventElem.parent('button, a');
                         let display = btn.hasClass('active') ? '' : 'none';
-                        $('#client-table thead th#search-' + title).css('display', display);
+                        $('#client-table thead th#search-' + escapeSelectorString(title)).css('display', display);
                     });
             });
         });
@@ -83,22 +88,24 @@
         <table id="client-table" border="1">
             <thead>
                 <tr>
-                    <th>name</th>
-                    <th>session</th>
-                    <th>session_start_end</th>
-                    <th>code</th>
-                    <th>products</th>
+                    {% if col_names %}
+                        {% for col_name in col_names %}
+                            <th>{{ col_name }}</th>
+                        {% endfor %}
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% if client_list %}
                     {% for client in client_list %}
                         <tr>
-                            <td><a href="{% url 'clients:detail' client.id %}">{{ client.name }}</a></td>
-                            <td>{{ client.session }}</td>
-                            <td>{{ client.session_start_end }}</td>
-                            <td>{{ client.code }}</td>
-                            <td>{{ client.products }}</td>
+                            {% for item, link in client %}
+                                {% if link %}
+                                    <td><a href="{% url link.url link.args %}">{{ item }}</a></td>
+                                {% else %}
+                                    <td>{{ item }}</td>
+                                {% endif %}
+                            {% endfor %}
                         </tr>
                     {% endfor %}
                 {% endif %}
