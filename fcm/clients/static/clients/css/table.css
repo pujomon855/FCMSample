@@ -14,7 +14,7 @@
     transform: translateY(-50%);
 }
 
-/* Column Choose */
+/* Column Chooser */
 .modal-body {
     display: flex;
     justify-content: space-around;
