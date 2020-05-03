@@ -11,33 +11,41 @@
         return val.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
     }
 
-    // Arg display is display state.
-    function updateSearchRowVisibility(colName, display, deleteSearchStr) {
-        let searchRow = $('#client-table thead th#search-' + escapeSelectorString(colName))
-            .css('display', display);
-        if (deleteSearchStr) {
-            let input = searchRow.children('input');
-            if (input.val() !== '') {
-                input.val('').change(); // Reset filtering by this column
-            }
-        }
+    // Returns JQuery object
+    function getSearchRow(colName) {
+        return $('#client-table thead th#search-' + escapeSelectorString(colName));
     }
 
     $(function() {
+        // Create header
+        let searchRow = $('#search-row');
+        let colNameRow = $('#col-name-row');
+        {% for col_name in col_names %}
+            searchRow.append(
+                $("<th></th>", {
+                    id: "search-" + "{{ col_name }}"
+                }).append(
+                    $("<input>", {
+                        type: "text",
+                        placeholder: "Search " + "{{ col_name }}",
+                    })
+                )
+            );
+            colNameRow.append(
+                $("<th></th>").text("{{ col_name }}")
+            );
+        {% endfor %}
+
         // DataTable
         let table = $('#client-table').DataTable();
 
         // Apply the search to every column
-        let searchRow = $('<tr></tr>');
         table.columns().every(function() {
-            let title = this.header().innerHTML;
-            let search = $('<input>', {
-                type: "text",
-                placeholder: "Search " + title,
-            });
+            let colName = this.header().innerHTML;
+            let searchInput = getSearchRow(colName).children('input');
 
             let that = this;
-            search.on('keyup change clear', function() {
+            searchInput.on('keyup change clear', function() {
                 // get search method
                 let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() === 'regex');
 
@@ -47,16 +55,7 @@
                         .draw();
                 }
             });
-
-            // Append to searchRow
-            searchRow
-                .append($('<th></th>')
-                    .attr('id', 'search-' + title)
-                    .append(search));
         });
-
-        // Append searchRow to the top of the header
-        $('#client-table thead').prepend(searchRow);
     });
 
     function openColumnChooser() {
@@ -109,12 +108,13 @@
         let hiddenColIndexes = getColIdxFromChooser('hidden-cols');
 
         let table = $('#client-table').DataTable();
-        table.columns(shownColIndexes).visible(true).every(function() {
-            updateSearchRowVisibility(this.header().innerHTML, '', false);
-        });
-        table.columns(hiddenColIndexes).visible(false).every(function() {
-            updateSearchRowVisibility(this.header().innerHTML, 'none', true);
-        });
+        table.columns(shownColIndexes).visible(true);
+        table.columns(hiddenColIndexes).every(function() {
+            let searchInput = getSearchRow(this.header().innerHTML).children('input');
+            if (searchInput.val() !== '') {
+                searchInput.val('').change(); // Reset filtering by this column
+            }
+        }).visible(false);
     });
 
 </script>
@@ -173,13 +173,8 @@
     <div>
         <table id="client-table" border="1">
             <thead>
-                <tr>
-                    {% if col_names %}
-                        {% for col_name in col_names %}
-                            <th>{{ col_name }}</th>
-                        {% endfor %}
-                    {% endif %}
-                </tr>
+                <tr id="search-row"></tr>
+                <tr id="col-name-row"></tr>
             </thead>
             <tbody>
                 {% if client_list %}
