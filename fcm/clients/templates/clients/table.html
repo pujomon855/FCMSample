@@ -67,7 +67,10 @@
                         // But a is used in IE instead of button!
                         let btn = (tag === 'BUTTON' || tag === 'A') ? eventElem : eventElem.parent('button, a');
                         let display = btn.hasClass('active') ? '' : 'none';
-                        $('#client-table thead th#search-' + escapeSelectorString(title)).css('display', display);
+                        $('#client-table thead th#search-' + escapeSelectorString(title))
+                            .css('display', display)
+                            .children('input')
+                                .val('').change(); // Reset filtering by this column
                     });
             });
         });
