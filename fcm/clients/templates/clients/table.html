@@ -16,8 +16,10 @@
         let searchRow = $('#client-table thead th#search-' + escapeSelectorString(colName))
             .css('display', display);
         if (deleteSearchStr) {
-            searchRow.children('input')
-                .val('').change(); // Reset filtering by this column
+            let input = searchRow.children('input');
+            if (input.val() !== '') {
+                input.val('').change(); // Reset filtering by this column
+            }
         }
     }
 
