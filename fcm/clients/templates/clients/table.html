@@ -37,7 +37,9 @@
         {% endfor %}
 
         // DataTable
-        let table = $('#client-table').DataTable();
+        let table = $('#client-table').DataTable({
+            stateSave: true
+        });
 
         // Apply the search to every column
         table.columns().every(function() {
