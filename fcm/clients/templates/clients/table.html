@@ -1,13 +1,24 @@
 {% extends 'clients/base.html' %}
-
+{% load static %}
 {% block title %}Client Table{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'clients/css/table.css' %}"/>
 <script type="text/javascript">
     'use strict';
 
     function escapeSelectorString(val) {
         return val.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
+    }
+
+    // Arg display is display state.
+    function updateSearchRowVisibility(colName, display, deleteSearchStr) {
+        let searchRow = $('#client-table thead th#search-' + escapeSelectorString(colName))
+            .css('display', display);
+        if (deleteSearchStr) {
+            searchRow.children('input')
+                .val('').change(); // Reset filtering by this column
+        }
     }
 
     $(function() {
@@ -58,7 +69,7 @@
             // Add event listener to columns toggle buttons to show/hide search row
             // because this manually created row is not shown/hidden by default buttons action
             $('div.dt-buttons .buttons-columnVisibility').each(function(idx, elem) {
-                let title = $(elem).text();
+                let colName = $(elem).text();
                 $(elem)
                     .on('click', function(event) {
                         let eventElem = $(event.target);
@@ -67,25 +78,122 @@
                         // But a is used in IE instead of button!
                         let btn = (tag === 'BUTTON' || tag === 'A') ? eventElem : eventElem.parent('button, a');
                         let display = btn.hasClass('active') ? '' : 'none';
-                        $('#client-table thead th#search-' + escapeSelectorString(title))
-                            .css('display', display)
-                            .children('input')
-                                .val('').change(); // Reset filtering by this column
+                        updateSearchRowVisibility(colName, display, true);
                     });
             });
         });
     });
+
+    function openColumnChooser() {
+        // Classify columns by visible state
+        let shownCols = [];
+        let hiddenCols = [];
+        $('#client-table').DataTable().columns().every(function() {
+            if (this.visible()) {
+                shownCols.push(this);
+            } else {
+                hiddenCols.push(this);
+            }
+        });
+
+        // Append column names to dialog
+        function createColNameHTML(id, cols) {
+            let ul = $('#' + id);
+            ul.children().remove();
+            for (let i in cols) { // for of cannot be applied to IE...
+                let col = cols[i];
+                ul.append($('<li></li>')
+                    .addClass('col-name')
+                    .data('col-idx', col.index())
+                    .text(col.header().innerHTML));
+            }
+        }
+        createColNameHTML('shown-cols', shownCols);
+        createColNameHTML('hidden-cols', hiddenCols);
+
+        // Columns to sortable
+        $('#hidden-cols, #shown-cols').sortable({
+            connectWith: '.connectedSortable'
+        }).disableSelection();
+
+        // Open Column Chooser
+        $('[data-remodal-id=modal]').remodal().open();
+    }
+
+    // Update columns' visible state when apply button pressed
+    $(document).on('confirmation', '.remodal', function() {
+        // Returns array of col-idx
+        function getColIdxFromChooser(id) {
+            let colIndexes = [];
+            $('#' + id).children().each(function(idx, elem) {
+                colIndexes.push($(elem).data('col-idx'));
+            });
+            return colIndexes;
+        }
+        let shownColIndexes = getColIdxFromChooser('shown-cols');
+        let hiddenColIndexes = getColIdxFromChooser('hidden-cols');
+
+        let table = $('#client-table').DataTable();
+        table.columns(shownColIndexes).visible(true).every(function() {
+            updateSearchRowVisibility(this.header().innerHTML, '', false);
+        });
+        table.columns(hiddenColIndexes).visible(false).every(function() {
+            updateSearchRowVisibility(this.header().innerHTML, 'none', true);
+        });
+    });
+
 </script>
 {% endblock %}
 
 {% block contents %}
 <h3>Client Table</h3>
 <div>
-    <div id="search-method">
-        <p>検索方法：
-            <input type="radio" name="searchMethod" value="normal" checked>通常
-            <input type="radio" name="searchMethod" value="regex">正規表現
-        </p>
+    <div id="table-ope-row1">
+        <div id="search-method" class="ope-item">
+            <p>検索方法：
+                <input type="radio" name="searchMethod" value="normal" checked>通常
+                <input type="radio" name="searchMethod" value="regex">正規表現
+            </p>
+        </div>
+        <!--Column Chooser Dialog-->
+        <div class="remodal" data-remodal-id="modal">
+            <button data-remodal-action="close" class="remodal-close"></button>
+            <div class="modal-title"><b>Column Chooser</b></div>
+            <div class="modal-body">
+                <div class="left">
+                    <fieldset>
+                        <legend>Hidden</legend>
+                        <input type="text" placeholder="Search column">
+                        <div class="col-area">
+                            <ul id="hidden-cols" class="connectedSortable col-names">
+
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="center">
+
+                </div>
+                <div class="right">
+                    <fieldset>
+                        <legend>Shown</legend>
+                        <input type="text" placeholder="Search column">
+                        <div class="col-area">
+                            <ul id="shown-cols" class="connectedSortable col-names">
+
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-remodal-action="confirm" class="remodal-confirm">Apply</button>
+                <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>
+            </div>
+        </div>
+        <div class="ope-item">
+            <button type="button" onclick="openColumnChooser()">Column Chooser</button>
+        </div>
     </div>
     <div>
         <table id="client-table" border="1">

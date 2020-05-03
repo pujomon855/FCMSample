@@ -1,0 +1,35 @@
+#table-ope-row1 {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.ope-item {
+    margin: 10px;
+    position: relative;
+}
+
+.ope-item button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Column Choose */
+.modal-body {
+    display: flex;
+    justify-content: space-around;
+}
+.modal-body>.left .col-names, .modal-body>.right .col-names {
+    width: 220px;
+    height: 300px;
+    backgroud-color: #CCFFCC;
+    overflow: scroll;
+}
+
+
+/* TODO 位置確認用の補助線 */
+
+div {
+    border: 1px solid green;
+}
+
