@@ -97,7 +97,7 @@
         }
     }
 
-    // Update columns' visible state when apply button pressed
+    // Update columns' visible state and order when apply button pressed
     $(document).on('confirmation', '.remodal', function() {
         // Returns array of col-idx
         function getColIdxFromChooser(id) {
@@ -110,11 +110,15 @@
         let shownColIndexes = getColIdxFromChooser('shown-cols');
         let hiddenColIndexes = getColIdxFromChooser('hidden-cols');
 
+        // Visible state
         let table = $('#client-table').DataTable();
         table.columns(shownColIndexes).visible(true);
         table.columns(hiddenColIndexes).every(function() {
             clearSearchInput(this.header().innerHTML);
         }).visible(false);
+
+        // Order
+        table.colReorder.order(shownColIndexes.concat(hiddenColIndexes));
     });
 
 
