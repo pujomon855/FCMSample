@@ -37,7 +37,9 @@
         {% endfor %}
 
         // DataTable
-        let table = $('#client-table').DataTable();
+        let table = $('#client-table').DataTable({
+            stateSave: true
+        });
 
         // Apply the search to every column
         table.columns().every(function() {
@@ -94,6 +96,13 @@
         $('[data-remodal-id=modal]').remodal().open();
     }
 
+    function clearSearchInput(colName) {
+        let searchInput = getSearchRow(colName).children('input');
+        if (searchInput.val() !== '') {
+            searchInput.val('').change(); // Reset filtering by this column
+        }
+    }
+
     // Update columns' visible state when apply button pressed
     $(document).on('confirmation', '.remodal', function() {
         // Returns array of col-idx
@@ -110,12 +119,18 @@
         let table = $('#client-table').DataTable();
         table.columns(shownColIndexes).visible(true);
         table.columns(hiddenColIndexes).every(function() {
-            let searchInput = getSearchRow(this.header().innerHTML).children('input');
-            if (searchInput.val() !== '') {
-                searchInput.val('').change(); // Reset filtering by this column
-            }
+            clearSearchInput(this.header().innerHTML);
         }).visible(false);
     });
+
+
+    window.addEventListener('beforeunload', function(event) {
+        // Clear search inputs before user leave this page
+        $('#client-table').DataTable().columns().every(function() {
+            clearSearchInput(this.header().innerHTML);
+        });
+    });
+
 
 </script>
 {% endblock %}
