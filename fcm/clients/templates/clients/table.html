@@ -38,25 +38,19 @@
 
         // DataTable
         let table = $('#client-table').DataTable({
-            stateSave: true
+            stateSave: true,
+            colReorder: true,
         });
 
         // Apply the search to every column
-        table.columns().every(function() {
-            let colName = this.header().innerHTML;
-            let searchInput = getSearchRow(colName).children('input');
+        $('#search-row input').on('keyup change clear', function() {
+            // get search method
+            let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() === 'regex');
 
-            let that = this;
-            searchInput.on('keyup change clear', function() {
-                // get search method
-                let isRegex = ($('div#search-method input[name=searchMethod]:checked').val() === 'regex');
-
-                if (that.search() !== this.value) {
-                    that
-                        .search(this.value, isRegex)
-                        .draw();
-                }
-            });
+            table
+                .column($(this).parent().index()+':visible')
+                .search(this.value, isRegex)
+                .draw();
         });
     });
 
