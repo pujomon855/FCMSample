@@ -21,6 +21,7 @@ class ClientTableRecord:
         'Products': lambda record: (record.products, None),
     }
     _CL_TAB_COL_NAMES = _CL_TAB_COL_VALUES.keys()
+    _CL_TAB_FUNCS = _CL_TAB_COL_VALUES.values()
 
     id: str
     name: str
@@ -38,7 +39,7 @@ class ClientTableRecord:
         return cls._CL_TAB_COL_NAMES
 
     def __iter__(self):
-        for func in self._CL_TAB_COL_VALUES.values():
+        for func in self._CL_TAB_FUNCS:
             yield func(self)
 
 
