@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Client, ClientClassifier, CodeSession, TradeType, HandlInst, Product, Session
 
 
-class ClientClassifierInLine(admin.StackedInline):
+class ClientClassifierInline(admin.StackedInline):
     model = ClientClassifier
     fieldsets = [
         (None, {'fields': (('identifier', 'view', 'code'),)}),
@@ -16,7 +16,7 @@ class ClientAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name']}),
     ]
-    inlines = [ClientClassifierInLine]
+    inlines = [ClientClassifierInline]
     search_fields = ['name']
     ordering = ['name']
 
