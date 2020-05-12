@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
@@ -78,3 +79,30 @@ def show_detail(request, pk):
     return render(request, 'clients/detail.html', {
         'client': client, 'limits': limits
     })
+
+
+# For admin form
+def get_trade_type(request):
+    trade_type = {
+        'trade_type': '',
+    }
+    if request.method == 'GET':
+        client_id = request.GET.get('client_id')
+        if client_id:
+            client_data = ClientView.objects.using('limit').filter(client_id=client_id)
+            trade_type['trade_type'] = client_data_to_str(client_data)
+    return JsonResponse(trade_type)
+
+
+def client_data_to_str(client_data):
+    if client_data.exists():
+        data = client_data[0]
+        trade_types = []
+        if data.is_disc:
+            trade_types.append('DISC')
+        if data.is_dma:
+            trade_types.append('DMA')
+        if data.is_dsa:
+            trade_types.append('DSA')
+        return ', '.join(trade_types)
+    return ''

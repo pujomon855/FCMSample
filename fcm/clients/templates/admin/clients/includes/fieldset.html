@@ -24,9 +24,9 @@
                     {% endif %}
                 </div>
             {% endfor %}
-            <div>
-                <label><b>取引可能形態(ReadOnly):</b></label>
-                <input type="text" class="vTextField" maxlength="20" readonly>
+            <div class="trade-type">
+                <label for="trade-type-input-{{ loop_count }}"><b>取引可能形態(ReadOnly):</b></label>
+                <input type="text" class="vTextField" id="trade-type-input-{{ loop_count }}" value="" readonly>
             </div>
         </div>
     {% endfor %}
