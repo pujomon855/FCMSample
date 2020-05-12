@@ -110,3 +110,24 @@ class ClientView(models.Model):
         managed = False
         db_table = 'Client_View'
         unique_together = (('client_id', 'product', 'handlinst', 'limit_type'),)
+
+
+class ClientTrade(models.Model):
+    client_id = models.CharField(primary_key=True, max_length=20)
+    is_disc = models.IntegerField(blank=True, null=True)
+    is_dma = models.IntegerField(blank=True, null=True)
+    is_dsa = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'ClientTrade'
+
+
+class ClientInfo(models.Model):
+    client_id = models.CharField(primary_key=True, max_length=20)
+    view = models.CharField(max_length=20)
+    code = models.CharField(max_length=20)
+
+    class Meta:
+        managed = False
+        db_table = 'ClientInfo'

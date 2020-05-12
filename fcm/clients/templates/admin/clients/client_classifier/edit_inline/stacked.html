@@ -6,7 +6,10 @@
 
   function getTradeType(event) {
     let $input = $(this);
-    let client_id = $input.val();
+    let inputVal = $input.val();
+    let inputId = $input.prop('id');
+    let key = inputId.endsWith('identifier') ? 'client_id' :
+                inputId.endsWith('view') ? 'view' : 'code';
 
     console.debug('input.val', $input.val());
 
@@ -14,7 +17,8 @@
       url: '{% url "clients:ajax_trade_type" %}',
       type: 'GET',
       data: {
-          client_id: client_id,
+          key: key,
+          value: inputVal,
       },
       dataType: 'json',
     }).done(function(response){
@@ -25,7 +29,7 @@
 
   function addGetTradeTypeEventListener() {
     // JavaScriptのaddEventListenerを使用しているので重複してイベントが登録されることはない
-    $('.fieldBox.field-identifier input').each(function(index, element) {
+    $('.fieldBox.field-identifier input, .fieldBox.field-view input, .fieldBox.field-code input').each(function(index, element) {
       element.addEventListener('change', getTradeType);
     });
   }

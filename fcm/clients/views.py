@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
-from .models import ClientClassifier, CodeSession, Client, ClientView, TradeType
+from .models import ClientClassifier, CodeSession, Client, ClientInfo, ClientTrade, ClientView, TradeType
 
 
 class IndexView(generic.TemplateView):
@@ -87,10 +87,20 @@ def get_trade_type(request):
         'trade_type': '',
     }
     if request.method == 'GET':
-        client_id = request.GET.get('client_id')
-        if client_id:
-            client_data = ClientView.objects.using('limit').filter(client_id=client_id)
-            trade_type['trade_type'] = client_data_to_str(client_data)
+        key = request.GET.get('key')
+        value = request.GET.get('value')
+        try:
+            if key:
+                if key == 'client_id':
+                    client_id = value
+                else:
+                    client_info = ClientInfo.objects.using('limit').get(view=value) if key == 'view' \
+                        else ClientInfo.objects.using('limit').get(code=value)
+                    client_id = client_info.client_id
+                client_data = ClientTrade.objects.using('limit').filter(client_id=client_id)
+                trade_type['trade_type'] = client_data_to_str(client_data)
+        except (ClientInfo.DoesNotExist, ClientTrade.DoesNotExist):
+            pass
     return JsonResponse(trade_type)
 
 
