@@ -1,23 +1,48 @@
 {% load i18n admin_urls static %}
+<script type="text/javascript" src="{% static 'admin/js/polyfill/string-polyfill.js' %}"></script>
 <script type="text/javascript" src="{% static 'clients/js/vendor/jquery-3.5.0.min.js' %}"></script>
 <script type="text/javascript">
   'use strict';
-  $(function() {
-    $('.fieldBox.field-identifier input').on('change', function(event) {
-      let $input = $(this);
-      let client_id = $input.val();
-      $.ajax({
-        url: '{% url "clients:ajax_trade_type" %}',
-        type: 'GET',
-        data: {
-            client_id: client_id,
-        },
-        dataType: 'json',
-      }).done(function(response){
-        let $target = $input.parent('div').siblings('.trade-type').children('input');
-        $target.val(response.trade_type);
-      })
+
+  function getTradeType(event) {
+    let $input = $(this);
+    let client_id = $input.val();
+
+    console.debug('input.val', $input.val());
+
+    $.ajax({
+      url: '{% url "clients:ajax_trade_type" %}',
+      type: 'GET',
+      data: {
+          client_id: client_id,
+      },
+      dataType: 'json',
+    }).done(function(response){
+      let $target = $input.parent('div').siblings('.trade-type').children('input');
+      $target.val(response.trade_type);
     })
+  }
+
+  function addGetTradeTypeEventListener() {
+    // JavaScriptのaddEventListenerを使用しているので重複してイベントが登録されることはない
+    $('.fieldBox.field-identifier input').each(function(index, element) {
+      element.addEventListener('change', getTradeType);
+    });
+  }
+
+  $(function() {
+    addGetTradeTypeEventListener();
+
+    // Client classifier の追加 ボタンをクリックしたイベントを補足し、取引形態取得用のリスナーを追加する。
+    $(document).on('click', function(event) {
+      let $target = $(event.target);
+      if ($target.parent('div').hasClass('add-row')
+          && $target.prop('tagName') === 'A'
+          && $target.text().startsWith('Client classifier')) {
+        addGetTradeTypeEventListener();
+      }
+    });
+
   })
 </script>
 <div class="js-inline-admin-formset inline-group"
