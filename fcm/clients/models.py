@@ -81,7 +81,7 @@ class TradeType(models.Model):
 
 
 class ClientLimit(models.Model):
-    client_id = models.CharField(primary_key=True, max_length=20)
+    client_id = models.CharField(max_length=20)
     product = models.CharField(max_length=20)
     handlinst = models.CharField(max_length=5)
     limit_type = models.CharField(max_length=1)
