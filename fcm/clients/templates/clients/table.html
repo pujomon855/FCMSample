@@ -183,6 +183,13 @@
         </div>
         <div class="ope-item">
             <button type="button" onclick="openColumnChooser()">Column Chooser</button>
+            <button type="button" onclick="showAll()">Show All</button>
+            {% if col_groups %}
+                {% for col_group in col_groups %}
+                    <button type="button" class="{{ col_group.css_classes_str }}"
+                            onclick="toggleColGroup()">{{ col_group.name }}</button>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
     <div>

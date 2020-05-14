@@ -8,12 +8,13 @@
     position: relative;
 }
 
+/*
 .ope-item button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
 }
-
+*/
 /* Column Chooser */
 .modal-body {
     display: flex;

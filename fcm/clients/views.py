@@ -36,16 +36,16 @@ class Cell(NamedTuple):
 
 @dataclass
 class ClientTableRecord:
-    _COL_GRP_NONE = ColGroup('', ('col-grp-none',))
+    _COL_GRP_CLIENT = ColGroup('Client', ('col-grp-client',))
     _COL_GRP_FIX = ColGroup('FIX', ('col-grp-fix',))
     _COL_GRP_OMS = ColGroup('OMS', ('col-grp-oms',))
 
     # key:Column、item: Cell
     # itemの戻り値は、属性値自身とリンク先の情報(なければNone)のタプル
     _CL_TAB_COL_VALUES = {
-        Column('Client Name', _COL_GRP_NONE):
+        Column('Client Name', _COL_GRP_CLIENT):
             lambda record: Cell(record.name, {'url': 'clients:detail', 'args': record.id}),
-        Column('View', _COL_GRP_NONE): lambda record: Cell(record.view),
+        Column('View', _COL_GRP_CLIENT): lambda record: Cell(record.view),
         Column('Session', _COL_GRP_FIX): lambda record: Cell(record.session),
         Column('Session Start End', _COL_GRP_FIX): lambda record: Cell(record.session_start_end),
         Column('Code', _COL_GRP_FIX): lambda record: Cell(record.code),
@@ -96,7 +96,7 @@ class ClientTableRecord:
 
     @classmethod
     def column_groups(cls):
-        return [cls._COL_GRP_NONE, cls._COL_GRP_FIX, cls._COL_GRP_OMS]
+        return [cls._COL_GRP_CLIENT, cls._COL_GRP_FIX, cls._COL_GRP_OMS]
 
     def __iter__(self):
         for func in self._CL_TAB_FUNCS:
@@ -128,9 +128,11 @@ class ClientTableView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['columns'] = ClientTableRecord.column_names()
+        context['col_groups'] = ClientTableRecord.column_groups()
         return context
 
-    def _set_limits(self, client_id, record):
+    @staticmethod
+    def _set_limits(client_id, record):
         """
         行データに注文の上限を設定する。
 
