@@ -13,15 +13,7 @@ class IndexView(generic.TemplateView):
 
 class ColGroup(NamedTuple):
     name: str
-    css_classes: tuple = tuple()
-
-    @property
-    def css_classes_str(self):
-        """
-        このグループのカラムに追加するcssクラスの文字列
-        :return: このグループのカラムに追加するcssクラスの文字列
-        """
-        return ' '.join(self.css_classes)
+    grp_class: str
 
 
 class Column(NamedTuple):
@@ -36,9 +28,9 @@ class Cell(NamedTuple):
 
 @dataclass
 class ClientTableRecord:
-    _COL_GRP_CLIENT = ColGroup('Client', ('col-grp-client',))
-    _COL_GRP_FIX = ColGroup('FIX', ('col-grp-fix',))
-    _COL_GRP_OMS = ColGroup('OMS', ('col-grp-oms',))
+    _COL_GRP_CLIENT = ColGroup('Client', 'col-grp-client')
+    _COL_GRP_FIX = ColGroup('FIX', 'col-grp-fix')
+    _COL_GRP_OMS = ColGroup('OMS', 'col-grp-oms')
 
     # key:Column、item: Cell
     # itemの戻り値は、属性値自身とリンク先の情報(なければNone)のタプル

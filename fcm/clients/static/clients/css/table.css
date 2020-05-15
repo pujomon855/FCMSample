@@ -1,20 +1,21 @@
 #table-ope-row1 {
     display: flex;
-    justify-content: flex-start;
 }
 
-.ope-item {
+#table-ope-row1 .ope-item {
     margin: 10px;
-    position: relative;
 }
 
-/*
-.ope-item button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+#table-ope-row1 #ope-buttons {
+    display: flex;
+    align-items: center;
 }
-*/
+
+#table-ope-row1 #ope-buttons button {
+    width: 90px;
+    margin-right: 2px;
+}
+
 /* Column Chooser */
 .modal-body {
     display: flex;

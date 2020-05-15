@@ -33,7 +33,7 @@
             );
             colNameRow.append(
                 $("<th></th>", {
-                    "class": "{{ col_group.css_classes_str }}",
+                    "class": "{{ col_group.grp_class }}",
                 }).text("{{ col_name }}")
             );
         {% endfor %}
@@ -53,6 +53,17 @@
                 .column($(this).parent().index()+':visible')
                 .search(this.value, isRegex)
                 .draw();
+        });
+
+        // Register columns' show hide event by their group
+        let hideColGrpCls = 'hide-col-grp';
+        $('#table-ope-row1 div.ope-item button.sh-groups').on('click', function(event) {
+            let $btn = $(this);
+            $btn.toggleClass(hideColGrpCls);
+            let grp_class = $btn.data('grp_class');
+            // If the button has this class, the columns of the group of this button should be invisible.
+            let isVisible = !$btn.hasClass(hideColGrpCls);
+            $('#client-table').DataTable().columns('.' + grp_class).visible(isVisible);
         });
     });
 
@@ -123,6 +134,9 @@
         table.colReorder.order(shownColIndexes.concat(hiddenColIndexes));
     });
 
+    function showAll(event) {
+        $('#client-table').DataTable().columns().visible(true);
+    }
 
     window.addEventListener('beforeunload', function(event) {
         // Clear search inputs before user leave this page
@@ -181,13 +195,13 @@
                 <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>
             </div>
         </div>
-        <div class="ope-item">
-            <button type="button" onclick="openColumnChooser()">Column Chooser</button>
-            <button type="button" onclick="showAll()">Show All</button>
+        <div id="ope-buttons" class="ope-item">
+            <div><button type="button" onclick="openColumnChooser()">Column Chooser</button></div>
+            <div><button type="button" onclick="showAll()">Show All</button></div>
             {% if col_groups %}
                 {% for col_group in col_groups %}
-                    <button type="button" class="{{ col_group.css_classes_str }}"
-                            onclick="toggleColGroup()">{{ col_group.name }}</button>
+                    <div><button type="button" class="{{ col_group.grp_class }} sh-groups"
+                            data-grp_class="{{ col_group.grp_class }}">{{ col_group.name }}</button></div>
                 {% endfor %}
             {% endif %}
         </div>
