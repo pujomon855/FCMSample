@@ -1,6 +1,6 @@
 {% extends 'clients/base.html' %}
-{% load static %}
-{% block title %}Client Table{% endblock %}
+{% load static i18n %}
+{% block title %}{% trans "Client Table" %}{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'clients/css/table.css' %}"/>
@@ -150,7 +150,7 @@
 {% endblock %}
 
 {% block contents %}
-<h3>Client Table</h3>
+<h3>{% trans "Client Table" %}</h3>
 <div>
     <div id="table-ope-row1">
         <div id="search-method" class="ope-item">
