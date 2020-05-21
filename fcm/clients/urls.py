@@ -13,6 +13,9 @@ urlpatterns = [
     # ex: /clients/3/
     path('<int:pk>/', views.show_detail, name='detail'),
 
+    # Add/Edit/Delete Client data
+    path('add/', views.add_client, name='add_view_session'),
+
     # for admin form
     path('admin/client_classifier/', views.get_trade_type, name='ajax_trade_type')
 ]

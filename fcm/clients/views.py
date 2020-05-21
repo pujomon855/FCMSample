@@ -212,3 +212,11 @@ def client_data_to_str(client_data):
             trade_types.append('DSA')
         return ', '.join(trade_types)
     return ''
+
+
+# ------------------------------------------------
+# Add/Edit/Delete Client Data
+# ------------------------------------------------
+
+def add_client(request):
+    return render(request, 'clients/add_client.html')

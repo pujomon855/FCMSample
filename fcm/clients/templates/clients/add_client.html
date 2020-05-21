@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Client</title>
+</head>
+<body>
+    <h1>Add Client</h1>
+
+    <form action="{% url 'clients:add_view_session' %}" method="post">
+        {% csrf_token %}
+        <div id="view-code-area">
+            <fieldset class="view-code-field">
+                <div id="view-code-top">
+                    <label for="view-code-input">View Code:</label>
+                    <input type="text" id="view-code-input" value="{{ classifier.view }}">
+                    <label for="fix-code-input">FIX Code:</label>
+                    <input type="text" id="fix-code-input" value="{{ classifier.code }}">
+                </div>
+                <div id="view-code-middle">
+                    <table id="view-code-trade-type-table">
+                        <tr>
+                            <th colspan="3">Equity</th>
+                            <th colspan="2">Future</th>
+                        </tr>
+                        <tr>
+                            <th>DISC</th>
+                            <th>DMA</th>
+                            <th>DSA</th>
+                            <th>DISC</th>
+                            <th>DMA</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="eq-disc-view" readonly>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="eq-dma-view" readonly>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="eq-dsa-view" readonly>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="fu-disc-view" readonly>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="fu-dma-view" readonly>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="view-code-session">
+                    <fieldset class="session-field">
+                        <div id="session-top">
+                            <label for="session-choice">Session:</label>
+                            <select id="session-choice" name="session_choice">
+                                {% for session in sessions %}
+                                    <option value="{{ session.id }}">{{ session.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div id="session-mid1">
+                            <label for="connection-start-date">Connection Start Date</label>
+                            <input type="date" id="connection-start-date" name="con_st_dt"
+                                value="{{ view_session.con_start_date }}">
+                            <label for="connection-end-date">Connection End Date</label>
+                            <input type="date" id="connection-end-date" name="con_ed_dt"
+                                value="{{ view_session.con_end_date }}">
+                        </div>
+                        <div id="session-mid2">
+                            <table id="session-trade-type">
+                                <tr>
+                                    <th></th>
+                                    <th>EQ</th>
+                                    <th>FU</th>
+                                    <th>OP</th>
+                                    <th>SP</th>
+                                </tr>
+                                <tr>
+                                    <td>DISC</td>
+                                    <td>
+                                        <input type="checkbox" name="eq-disc-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="fu-disc-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="sp-disc-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="op-disc-session">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DMA</td>
+                                    <td>
+                                        <input type="checkbox" name="eq-dma-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="fu-dma-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="sp-dma-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="op-dma-session">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DSA</td>
+                                    <td>
+                                        <input type="checkbox" name="eq-dsa-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="fu-dsa-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="sp-dsa-session">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="op-dsa-session">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+            </fieldset>
+        </div>
+        <div id="submit-area">
+            <input type="submit" value="Add">
+        </div>
+    </form>
+</body>
+</html>
