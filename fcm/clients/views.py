@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
