@@ -1,21 +1,93 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Add Client</title>
+    <script type="text/javascript" src="{% static 'clients/js/vendor/jquery-3.5.0.min.js' %}"></script>
+    <script type="text/javascript">
+        'use strict';
+
+        function setCheck($chkBoxInput, dbVal) {
+            if (dbVal === 1) {
+                console.log($chkBoxInput.prop('name'));
+                $chkBoxInput.prop('checked', true);
+            }
+        }
+
+        function getClientInfo(event) {
+            let $input = $(this);
+            let inputVal = $input.val();
+            let inputId = $input.prop('id');
+            let key = inputId === 'id_view' ? 'view_code' : 'fix_code';
+
+            $.ajax({
+                url: '{% url "clients:ajax_view_fix" %}',
+                type: 'GET',
+                data: {
+                    key: key,
+                    value: inputVal,
+                },
+                dataType: 'json',
+            }).done(function(res){
+                console.log(res.exists);
+                if (res.exists) {
+                    $('#id_identifier').val(res.client_id);
+                    $('#id_view').val(res.view_code);
+                    $('#id_code').val(res.fix_code);
+
+                    let $table = $('#view-code-trade-type-table');
+
+                    console.log('table name = ' + $table.prop('id'));
+                    $table.find('input').each(function(index, element) {
+                        console.log($(element).prop('name'));
+                    });
+
+                    setCheck($table.find('input[name="eq-disc-view"]'), res.eq_disc);
+                    setCheck($table.find('input[name="eq-dma-view"]'), res.eq_dma);
+                    setCheck($table.find('input[name="eq-dsa-view"]'), res.eq_dsa);
+                    setCheck($table.find('input[name="fu-disc-view"]'), res.fu_disc);
+                    setCheck($table.find('input[name="fu-dma-view"]'), res.fu_dma);
+                }
+            })
+        }
+
+        function addGetClientInfoEventListener() {
+            // JavaScriptのaddEventListenerを使用しているので重複してイベントが登録されることはない
+            $('#id_view, #id_code').each(function(index, element) {
+                element.addEventListener('change', getClientInfo);
+            });
+        }
+
+        $(function() {
+            addGetClientInfoEventListener();
+        })
+    </script>
 </head>
 <body>
     <h1>Add Client</h1>
 
     <form action="{% url 'clients:add_view_session' %}" method="post">
         {% csrf_token %}
+        <div id="client-area">
+            {{ client_form.non_field_errors }}
+            <div id="client-top">
+                {{ client_form.name.errors }}
+                {{ client_form.name.label_tag }}
+                {{ client_form.name }}
+            </div>
+        </div>
         <div id="view-code-area">
             <fieldset class="view-code-field">
+                {{ view_code_form.non_field_errors }}
                 <div id="view-code-top">
-                    <label for="view-code-input">View Code:</label>
-                    <input type="text" id="view-code-input" value="{{ classifier.view }}">
-                    <label for="fix-code-input">FIX Code:</label>
-                    <input type="text" id="fix-code-input" value="{{ classifier.code }}">
+                    {{ view_code_form.identifier.as_hidden }}
+                    {{ view_code_form.view.errors }}
+                    {{ view_code_form.view.label_tag }}
+                    {{ view_code_form.view }}
+                    {{ view_code_form.code.errors }}
+                    {{ view_code_form.code.label_tag }}
+                    {{ view_code_form.code }}
                 </div>
                 <div id="view-code-middle">
                     <table id="view-code-trade-type-table">
@@ -32,42 +104,41 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="checkbox" name="eq-disc-view" readonly>
+                                <input type="checkbox" name="eq-disc-view" disabled="disabled">
                             </td>
                             <td>
-                                <input type="checkbox" name="eq-dma-view" readonly>
+                                <input type="checkbox" name="eq-dma-view" disabled="disabled">
                             </td>
                             <td>
-                                <input type="checkbox" name="eq-dsa-view" readonly>
+                                <input type="checkbox" name="eq-dsa-view" disabled="disabled">
                             </td>
                             <td>
-                                <input type="checkbox" name="fu-disc-view" readonly>
+                                <input type="checkbox" name="fu-disc-view" disabled="disabled">
                             </td>
                             <td>
-                                <input type="checkbox" name="fu-dma-view" readonly>
+                                <input type="checkbox" name="fu-dma-view" disabled="disabled">
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div id="view-code-session">
                     <fieldset class="session-field">
+                        {{ view_code_session_form.non_field_errors }}
                         <div id="session-top">
-                            <label for="session-choice">Session:</label>
-                            <select id="session-choice" name="session_choice">
-                                {% for session in sessions %}
-                                    <option value="{{ session.id }}">{{ session.name }}</option>
-                                {% endfor %}
-                            </select>
+                            {{ view_code_session_form.session.errors }}
+                            {{ view_code_session_form.session.label_tag }}
+                            {{ view_code_session_form.session }}
                         </div>
                         <div id="session-mid1">
-                            <label for="connection-start-date">Connection Start Date</label>
-                            <input type="date" id="connection-start-date" name="con_st_dt"
-                                value="{{ view_session.con_start_date }}">
-                            <label for="connection-end-date">Connection End Date</label>
-                            <input type="date" id="connection-end-date" name="con_ed_dt"
-                                value="{{ view_session.con_end_date }}">
+                            {{ view_code_session_form.connection_start_date.errors }}
+                            {{ view_code_session_form.connection_start_date.label_tag }}
+                            {{ view_code_session_form.connection_start_date }}
+                            {{ view_code_session_form.connection_end_date.errors }}
+                            {{ view_code_session_form.connection_end_date.label_tag }}
+                            {{ view_code_session_form.connection_end_date }}
                         </div>
                         <div id="session-mid2">
+                            {{ session_trade_type_form.non_field_errors }}
                             <table id="session-trade-type">
                                 <tr>
                                     <th></th>
@@ -79,46 +150,46 @@
                                 <tr>
                                     <td>DISC</td>
                                     <td>
-                                        <input type="checkbox" name="eq-disc-session">
+                                        {{ session_trade_type_form.eq_disc }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="fu-disc-session">
+                                        {{ session_trade_type_form.fu_disc }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="sp-disc-session">
+                                        {{ session_trade_type_form.op_disc }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="op-disc-session">
+                                        {{ session_trade_type_form.sp_disc }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>DMA</td>
                                     <td>
-                                        <input type="checkbox" name="eq-dma-session">
+                                        {{ session_trade_type_form.eq_dma }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="fu-dma-session">
+                                        {{ session_trade_type_form.fu_dma }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="sp-dma-session">
+                                        {{ session_trade_type_form.op_dma }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="op-dma-session">
+                                        {{ session_trade_type_form.sp_dma }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>DSA</td>
                                     <td>
-                                        <input type="checkbox" name="eq-dsa-session">
+                                        {{ session_trade_type_form.eq_dsa }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="fu-dsa-session">
+                                        {{ session_trade_type_form.fu_dsa }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="sp-dsa-session">
+                                        {{ session_trade_type_form.op_dsa }}
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="op-dsa-session">
+                                        {{ session_trade_type_form.sp_dsa }}
                                     </td>
                                 </tr>
                             </table>

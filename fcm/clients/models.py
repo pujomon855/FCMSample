@@ -45,9 +45,11 @@ class ClientClassifier(models.Model):
 class CodeSession(models.Model):
     code = models.ForeignKey(ClientClassifier, on_delete=models.PROTECT)
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
+    connection_start_date = models.DateField('Connection Start Date', blank=True, null=True)
+    connection_end_date = models.DateField('Connection End Date', blank=True, null=True)
 
     def __str__(self):
-        return f'{self.code}, {self.session}'
+        return f'{self.code}, {self.session}, {self.connection_start_date}, {self.connection_end_date}'
 
 
 class Logic(models.Model):
@@ -102,9 +104,9 @@ class ClientView(models.Model):
     handlinst = models.CharField(max_length=5)
     limit_type = models.CharField(max_length=1)
     order_limit = models.IntegerField(blank=True, null=True)
-    is_disc = models.IntegerField(blank=True, null=True)
-    is_dma = models.IntegerField(blank=True, null=True)
-    is_dsa = models.IntegerField(blank=True, null=True)
+    eq_disc = models.IntegerField(blank=True, null=True)
+    eq_dma = models.IntegerField(blank=True, null=True)
+    eq_dsa = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -114,9 +116,12 @@ class ClientView(models.Model):
 
 class ClientTrade(models.Model):
     client_id = models.CharField(primary_key=True, max_length=20)
-    is_disc = models.IntegerField(blank=True, null=True)
-    is_dma = models.IntegerField(blank=True, null=True)
-    is_dsa = models.IntegerField(blank=True, null=True)
+    eq_disc = models.IntegerField(blank=True, null=True)
+    eq_dma = models.IntegerField(blank=True, null=True)
+    eq_dsa = models.IntegerField(blank=True, null=True)
+    fu_disc = models.IntegerField(blank=True, null=True)
+    fu_dma = models.IntegerField(blank=True, null=True)
+    fu_dsa = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
