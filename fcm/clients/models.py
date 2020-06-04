@@ -82,6 +82,54 @@ class TradeType(models.Model):
         return f'{self.code}, {self.session}, {self.product}, {self.handlinst}'
 
 
+class Currency(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class CostType(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class ChangeType(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Vendor(models.Model):
+    name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Cost(models.Model):
+    client_session = models.ForeignKey(CodeSession, on_delete=models.PROTECT)
+    cost_type = models.ForeignKey(CostType, on_delete=models.PROTECT)
+    vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    handlinst = models.ForeignKey(HandlInst, on_delete=models.PROTECT)
+    change_type = models.ForeignKey(ChangeType, on_delete=models.PROTECT)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
+    change = models.FloatField()
+
+    def __str__(self):
+        return f'{self.client_session}, {self.cost_type}, {self.vendor}, {self.product}, ' \
+               f'{self.handlinst}, {self.change_type}, {self.currency}. {self.change}'
+
+    class Meta:
+        unique_together = (('client_session', 'cost_type', 'product', 'handlinst'), )
+
+
+# 以下MySQL-DB
+
 class ClientLimit(models.Model):
     client_id = models.CharField(max_length=20)
     product = models.CharField(max_length=20)

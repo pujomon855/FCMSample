@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import Client, ClientClassifier, CodeSession, TradeType, HandlInst, Product, Session
+from .models import Currency, CostType, ChangeType, Vendor, Cost
 
 
 class ClientClassifierInline(admin.StackedInline):
@@ -45,3 +46,8 @@ admin.site.register(Session, SessionAdmin)
 
 admin.site.register(HandlInst)
 admin.site.register(Product)
+admin.site.register(CostType)
+admin.site.register(ChangeType)
+admin.site.register(Vendor)
+admin.site.register(Cost)
+admin.site.register(Currency)
