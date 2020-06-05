@@ -2,3 +2,4 @@
 js_sample/
 *.pyc
 fcm/clients/migrations/
+fcm/clients/static/clients/
