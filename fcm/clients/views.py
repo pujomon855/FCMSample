@@ -1,9 +1,12 @@
 from dataclasses import dataclass
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
+import openpyxl
+import os
 from typing import NamedTuple
 
+from fcm import settings
 from .models import ClientClassifier, CodeSession, Client, ClientInfo, ClientTrade, ClientView, TradeType
 from .models import Product, HandlInst
 from .forms import ClientForm, ViewCodeForm, ViewCodeSessionForm, SessionTradeTypeForm
@@ -387,3 +390,20 @@ def get_client_info(request):
         except (ClientInfo.DoesNotExist, ClientTrade.DoesNotExist):
             pass
     return JsonResponse(client_info)
+
+
+# ------------------------------------------------
+# Export Client Table
+# ------------------------------------------------
+def export_client_table(request):
+    if request.method == 'POST':
+        file_path = os.path.join(settings.BASE_DIR, 'clients\\static\\clients\\excel\\FIXClientTable.xlsx')
+        print(f'{file_path=}')
+        wb = openpyxl.load_workbook(file_path)
+        sheet = wb['Clients']
+        sheet['A3'] = 1
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=FIXClientTable.xlsx'
+        wb.save(response)
+        return response
+    return HttpResponse()

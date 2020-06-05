@@ -1,9 +1,19 @@
 {% extends 'clients/base.html' %}
-
 {% block title %}FCMSample{% endblock %}
+
+{% block head %}
+<script type="text/javascript">
+    'use strict';
+
+</script>
+{% endblock %}
 
 {% block contents %}
     <ul>
         <li><a href="{% url 'clients:table' %}">顧客一覧</a></li>
     </ul>
+    <form action="{% url 'clients:download_table' %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Download Client Table">
+    </form>
 {% endblock %}

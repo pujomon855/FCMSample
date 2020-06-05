@@ -41,6 +41,9 @@ class ClientClassifier(models.Model):
     def __str__(self):
         return f'{self.client}: {self.identifier}, {self.view}, {self.code}'
 
+    class Meta:
+        unique_together = (('identifier', 'view'), ('identifier', 'code'), ('view', 'code'), )
+
 
 class CodeSession(models.Model):
     code = models.ForeignKey(ClientClassifier, on_delete=models.PROTECT)
@@ -50,6 +53,9 @@ class CodeSession(models.Model):
 
     def __str__(self):
         return f'{self.code}, {self.session}, {self.connection_start_date}, {self.connection_end_date}'
+
+    class Meta:
+        unique_together = (('code', 'session'), )
 
 
 class Logic(models.Model):
@@ -114,11 +120,11 @@ class Cost(models.Model):
     client_session = models.ForeignKey(CodeSession, on_delete=models.PROTECT)
     cost_type = models.ForeignKey(CostType, on_delete=models.PROTECT)
     vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    handlinst = models.ForeignKey(HandlInst, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, blank=True, null=True)
+    handlinst = models.ForeignKey(HandlInst, on_delete=models.PROTECT, blank=True, null=True)
     change_type = models.ForeignKey(ChangeType, on_delete=models.PROTECT)
-    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
-    change = models.FloatField()
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, blank=True, null=True)
+    change = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.client_session}, {self.cost_type}, {self.vendor}, {self.product}, ' \

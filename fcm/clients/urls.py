@@ -17,6 +17,9 @@ urlpatterns = [
     path('add/', views.add_client, name='add_view_session'),
     path('add/ajax_view_fix/', views.get_client_info, name='ajax_view_fix'),
 
+    # download client table
+    path('dltable/', views.export_client_table, name='download_table'),
+
     # for admin form
     path('admin/client_classifier/', views.get_trade_type, name='ajax_trade_type')
 ]
