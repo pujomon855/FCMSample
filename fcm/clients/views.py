@@ -397,8 +397,7 @@ def get_client_info(request):
 # ------------------------------------------------
 def export_client_table(request):
     if request.method == 'POST':
-        file_path = os.path.join(settings.BASE_DIR, 'clients\\static\\clients\\excel\\FIXClientTable.xlsx')
-        print(f'{file_path=}')
+        file_path = os.path.join(settings.BASE_DIR, 'clients/static/clients/excel/FIXClientTable.xlsx')
         wb = openpyxl.load_workbook(file_path)
         sheet = wb['Clients']
         sheet['A3'] = 1
