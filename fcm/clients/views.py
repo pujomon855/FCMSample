@@ -6,22 +6,8 @@ from typing import NamedTuple
 
 from .export.tabout import create_client_table_xl
 from .models import ClientClassifier, CodeSession, Client, ClientInfo, ClientTrade, ClientView, TradeType
-from .models import Product, HandlInst
 from .forms import ClientForm, ViewCodeForm, ViewCodeSessionForm, SessionTradeTypeForm
-
-
-__PRODUCT_DICT = {
-    'eq': Product.objects.get(name='Equity'),
-    'fu': Product.objects.get(name='Future'),
-    'op': Product.objects.get(name='Option'),
-    'sp': Product.objects.get(name='Spread'),
-}
-
-__HANDLINST_DICT = {
-    'disc': HandlInst.objects.get(name='DISC'),
-    'dma': HandlInst.objects.get(name='DMA'),
-    'dsa': HandlInst.objects.get(name='DSA'),
-}
+from .utils.clients import get_product, get_handlinst, trade_types_sdb_to_str
 
 
 class IndexView(generic.TemplateView):
@@ -220,14 +206,7 @@ def get_trade_type(request):
 def client_data_to_str(client_data):
     if client_data.exists():
         data = client_data[0]
-        trade_types = []
-        if data.eq_disc:
-            trade_types.append('DISC')
-        if data.eq_dma:
-            trade_types.append('DMA')
-        if data.eq_dsa:
-            trade_types.append('DSA')
-        return ', '.join(trade_types)
+        return trade_types_sdb_to_str(data)
     return ''
 
 
@@ -333,13 +312,13 @@ def save_trade_types(classifier, session, session_trade_type_form):
     :param session: セッション
     :param session_trade_type_form: 取引形態入力フォーム
     """
-    eq = __PRODUCT_DICT.get('eq')
-    fu = __PRODUCT_DICT.get('fu')
-    op = __PRODUCT_DICT.get('op')
-    sp = __PRODUCT_DICT.get('sp')
-    disc = __HANDLINST_DICT.get('disc')
-    dma = __HANDLINST_DICT.get('dma')
-    dsa = __HANDLINST_DICT.get('dsa')
+    eq = get_product('eq')
+    fu = get_product('fu')
+    op = get_product('op')
+    sp = get_product('sp')
+    disc = get_handlinst('disc')
+    dma = get_handlinst('dma')
+    dsa = get_handlinst('dsa')
 
     _save_trade_type(session_trade_type_form.cleaned_data['eq_disc'], classifier, session, eq, disc)
     _save_trade_type(session_trade_type_form.cleaned_data['eq_dma'], classifier, session, eq, dma)
