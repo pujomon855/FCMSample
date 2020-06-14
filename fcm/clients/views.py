@@ -6,7 +6,7 @@ from typing import NamedTuple
 
 from .export.tabout import create_client_table_xl
 from .models import ClientClassifier, CodeSession, Client, ClientInfo, ClientTrade, ClientView, TradeType
-from .forms import ClientForm, ViewCodeForm, ViewCodeSessionForm, SessionTradeTypeForm
+from .forms import ClientForm, ViewCodeForm, ViewCodeSessionForm
 from .utils.clients import get_product, get_handlinst, trade_types_sdb_to_str
 
 
@@ -219,11 +219,10 @@ def add_client(request):
         client_form = ClientForm(request.POST)
         view_code_form = ViewCodeForm(request.POST)
         view_code_session_form = ViewCodeSessionForm(request.POST)
-        session_trade_type_form = SessionTradeTypeForm(request.POST)
 
         # フォーム単体の入力チェック
         if client_form.is_valid() and view_code_form.is_valid() and \
-                view_code_session_form.is_valid() and session_trade_type_form.is_valid():
+                view_code_session_form.is_valid():
             is_valid = True
             # 入力データの組み合わせでのエラーチェック
             client_id = view_code_form["identifier"].value()  # identifierはhidden fieldのためcleaned_dataから取得できない
@@ -260,19 +259,17 @@ def add_client(request):
                 view_code_session.session = session
                 view_code_session.save()
 
-                save_trade_types(classifier, session, session_trade_type_form)
+                save_trade_types(client_classifier, session, view_code_session_form)
 
     else:
         client_form = ClientForm()
         view_code_form = ViewCodeForm()
         view_code_session_form = ViewCodeSessionForm()
-        session_trade_type_form = SessionTradeTypeForm()
 
     context = {
         'client_form': client_form,
         'view_code_form': view_code_form,
         'view_code_session_form': view_code_session_form,
-        'session_trade_type_form': session_trade_type_form,
     }
 
     return render(request, 'clients/add_client.html', context)
@@ -304,13 +301,13 @@ def get_existing_client_classifier(client_id):
     return None
 
 
-def save_trade_types(classifier, session, session_trade_type_form):
+def save_trade_types(classifier, session, view_code_session_form):
     """
     取引形態を保存する
 
     :param classifier: 顧客識別情報
     :param session: セッション
-    :param session_trade_type_form: 取引形態入力フォーム
+    :param view_code_session_form: 取引形態入力蘭のあるフォーム
     """
     eq = get_product('eq')
     fu = get_product('fu')
@@ -320,18 +317,18 @@ def save_trade_types(classifier, session, session_trade_type_form):
     dma = get_handlinst('dma')
     dsa = get_handlinst('dsa')
 
-    _save_trade_type(session_trade_type_form.cleaned_data['eq_disc'], classifier, session, eq, disc)
-    _save_trade_type(session_trade_type_form.cleaned_data['eq_dma'], classifier, session, eq, dma)
-    _save_trade_type(session_trade_type_form.cleaned_data['eq_dsa'], classifier, session, eq, dsa)
-    _save_trade_type(session_trade_type_form.cleaned_data['fu_disc'], classifier, session, fu, disc)
-    _save_trade_type(session_trade_type_form.cleaned_data['fu_dma'], classifier, session, fu, dma)
-    _save_trade_type(session_trade_type_form.cleaned_data['fu_dsa'], classifier, session, fu, dsa)
-    _save_trade_type(session_trade_type_form.cleaned_data['op_disc'], classifier, session, op, disc)
-    _save_trade_type(session_trade_type_form.cleaned_data['op_dma'], classifier, session, op, dma)
-    _save_trade_type(session_trade_type_form.cleaned_data['op_dsa'], classifier, session, op, dsa)
-    _save_trade_type(session_trade_type_form.cleaned_data['sp_disc'], classifier, session, sp, disc)
-    _save_trade_type(session_trade_type_form.cleaned_data['sp_dma'], classifier, session, sp, dma)
-    _save_trade_type(session_trade_type_form.cleaned_data['sp_dsa'], classifier, session, sp, dsa)
+    _save_trade_type(view_code_session_form.cleaned_data['eq_disc'], classifier, session, eq, disc)
+    _save_trade_type(view_code_session_form.cleaned_data['eq_dma'], classifier, session, eq, dma)
+    _save_trade_type(view_code_session_form.cleaned_data['eq_dsa'], classifier, session, eq, dsa)
+    _save_trade_type(view_code_session_form.cleaned_data['fu_disc'], classifier, session, fu, disc)
+    _save_trade_type(view_code_session_form.cleaned_data['fu_dma'], classifier, session, fu, dma)
+    _save_trade_type(view_code_session_form.cleaned_data['fu_dsa'], classifier, session, fu, dsa)
+    _save_trade_type(view_code_session_form.cleaned_data['op_disc'], classifier, session, op, disc)
+    _save_trade_type(view_code_session_form.cleaned_data['op_dma'], classifier, session, op, dma)
+    _save_trade_type(view_code_session_form.cleaned_data['op_dsa'], classifier, session, op, dsa)
+    _save_trade_type(view_code_session_form.cleaned_data['sp_disc'], classifier, session, sp, disc)
+    _save_trade_type(view_code_session_form.cleaned_data['sp_dma'], classifier, session, sp, dma)
+    _save_trade_type(view_code_session_form.cleaned_data['sp_dsa'], classifier, session, sp, dsa)
 
 
 def _save_trade_type(flag, classifier, session, product, handlinst):

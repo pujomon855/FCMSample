@@ -25,16 +25,6 @@ class ViewCodeForm(ModelForm):
 
 class ViewCodeSessionForm(ModelForm):
     session = ModelChoiceField(Session.objects.all())
-
-    class Meta:
-        model = CodeSession
-        fields = [
-            'connection_start_date',
-            'connection_end_date',
-        ]
-
-
-class SessionTradeTypeForm(Form):
     eq_disc = BooleanField(required=False)
     eq_dma = BooleanField(required=False)
     eq_dsa = BooleanField(required=False)
@@ -47,3 +37,10 @@ class SessionTradeTypeForm(Form):
     sp_disc = BooleanField(required=False)
     sp_dma = BooleanField(required=False)
     sp_dsa = BooleanField(required=False)
+
+    class Meta:
+        model = CodeSession
+        fields = [
+            'connection_start_date',
+            'connection_end_date',
+        ]
