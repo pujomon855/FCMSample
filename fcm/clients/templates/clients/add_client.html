@@ -122,78 +122,84 @@
                     </table>
                 </div>
                 <div id="view-code-session">
-                    <fieldset class="session-field">
-                        {{ view_code_session_form.non_field_errors }}
-                        <div id="session-top">
-                            {{ view_code_session_form.session.errors }}
-                            {{ view_code_session_form.session.label_tag }}
-                            {{ view_code_session_form.session }}
-                        </div>
-                        <div id="session-mid1">
-                            {{ view_code_session_form.connection_start_date.errors }}
-                            {{ view_code_session_form.connection_start_date.label_tag }}
-                            {{ view_code_session_form.connection_start_date }}
-                            {{ view_code_session_form.connection_end_date.errors }}
-                            {{ view_code_session_form.connection_end_date.label_tag }}
-                            {{ view_code_session_form.connection_end_date }}
-                        </div>
-                        <div id="session-mid2">
-                            <table id="session-trade-type">
-                                <tr>
-                                    <th></th>
-                                    <th>EQ</th>
-                                    <th>FU</th>
-                                    <th>OP</th>
-                                    <th>SP</th>
-                                </tr>
-                                <tr>
-                                    <td>DISC</td>
-                                    <td>
-                                        {{ view_code_session_form.eq_disc }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.fu_disc }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.op_disc }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.sp_disc }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>DMA</td>
-                                    <td>
-                                        {{ view_code_session_form.eq_dma }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.fu_dma }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.op_dma }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.sp_dma }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>DSA</td>
-                                    <td>
-                                        {{ view_code_session_form.eq_dsa }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.fu_dsa }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.op_dsa }}
-                                    </td>
-                                    <td>
-                                        {{ view_code_session_form.sp_dsa }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </fieldset>
+                    {{ view_code_session_formset.management_form }}
+                    {% for view_code_session_form in view_code_session_formset %}
+                        <fieldset class="session-field">
+                            {{ view_code_session_form.non_field_errors }}
+                            <div class="session-top">
+                                {{ view_code_session_form.session.errors }}
+                                {{ view_code_session_form.session.label_tag }}
+                                {{ view_code_session_form.session }}
+                                {% if view_code_session_formset.can_delete %}
+                                    {{ view_code_session_form.DELETE }}
+                                {% endif %}
+                            </div>
+                            <div class="session-mid1">
+                                {{ view_code_session_form.connection_start_date.errors }}
+                                {{ view_code_session_form.connection_start_date.label_tag }}
+                                {{ view_code_session_form.connection_start_date }}
+                                {{ view_code_session_form.connection_end_date.errors }}
+                                {{ view_code_session_form.connection_end_date.label_tag }}
+                                {{ view_code_session_form.connection_end_date }}
+                            </div>
+                            <div class="session-mid2">
+                                <table class="session-trade-type">
+                                    <tr>
+                                        <th></th>
+                                        <th>EQ</th>
+                                        <th>FU</th>
+                                        <th>OP</th>
+                                        <th>SP</th>
+                                    </tr>
+                                    <tr>
+                                        <td>DISC</td>
+                                        <td>
+                                            {{ view_code_session_form.eq_disc }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.fu_disc }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.op_disc }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.sp_disc }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>DMA</td>
+                                        <td>
+                                            {{ view_code_session_form.eq_dma }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.fu_dma }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.op_dma }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.sp_dma }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>DSA</td>
+                                        <td>
+                                            {{ view_code_session_form.eq_dsa }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.fu_dsa }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.op_dsa }}
+                                        </td>
+                                        <td>
+                                            {{ view_code_session_form.sp_dsa }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </fieldset>
+                    {% endfor %}
                 </div>
             </fieldset>
         </div>

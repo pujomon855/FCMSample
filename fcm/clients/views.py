@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from django.forms import modelformset_factory
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
@@ -215,64 +216,79 @@ def client_data_to_str(client_data):
 # ------------------------------------------------
 
 def add_client(request):
+    ViewCodeSessionFormset = modelformset_factory(
+        CodeSession, form=ViewCodeSessionForm, extra=0, min_num=1, validate_min=True, can_delete=True)
     if request.method == 'POST':
         client_form = ClientForm(request.POST)
         view_code_form = ViewCodeForm(request.POST)
-        view_code_session_form = ViewCodeSessionForm(request.POST)
+        view_code_session_formset = ViewCodeSessionFormset(request.POST)
 
         # フォーム単体の入力チェック
         if client_form.is_valid() and view_code_form.is_valid() and \
-                view_code_session_form.is_valid():
-            is_valid = True
-            # 入力データの組み合わせでのエラーチェック
-            client_id = view_code_form["identifier"].value()  # identifierはhidden fieldのためcleaned_dataから取得できない
-            client = get_existing_client(client_form.cleaned_data['name'])
-            classifier = get_existing_client_classifier(client_id)
-            session = view_code_session_form.cleaned_data['session']
-            if classifier:
-                # 他の顧客と紐づいていないかチェック
-                if client and classifier.client.name != client.name:
-                    view_err_msg = f'{classifier.view} is already linked to {classifier.client.name}.'
-                    view_code_form.add_error('view', view_err_msg)
-                    is_valid = False
-                # ViewCodeとSessionの組み合わせがすでに存在しているかチェック
-                if CodeSession.objects.filter(code=classifier, session=session).exists():
-                    session_err_msg = f'The combination of {classifier.code} and {session} is already exists.'
-                    view_code_session_form.add_error('session', session_err_msg)
-                    is_valid = False
+                view_code_session_formset.is_valid():
+            for view_code_session_form in view_code_session_formset:
+                # 入力データの組み合わせでのエラーチェック
+                # identifierはhidden fieldのためcleaned_dataから取得できない
+                client_id = view_code_form["identifier"].value()
+                client = get_existing_client(client_form.cleaned_data['name'])
+                classifier = get_existing_client_classifier(client_id)
+                session = view_code_session_form.cleaned_data['session']
+                is_valid = validate_client_combo(classifier, client, session, view_code_form, view_code_session_form)
 
-            # データの組み合わせに問題がない場合のみ保存処理を実行
-            if is_valid:
-                # 顧客は新規の場合のみ保存
-                if client is None:
-                    client = client_form.save()
+                # データの組み合わせに問題がない場合のみ保存処理を実行
+                if is_valid:
+                    # 顧客は新規の場合のみ保存
+                    if client is None:
+                        client = client_form.save()
 
-                # 顧客識別情報に、顧客とhidden fieldであるclient_idを設定して保存
-                client_classifier = view_code_form.save(commit=False)
-                client_classifier.client = client
-                client_classifier.identifier = client_id
-                client_classifier.save()
+                    # 顧客識別情報に、顧客とhidden fieldであるclient_idを設定して保存
+                    client_classifier = view_code_form.save(commit=False)
+                    client_classifier.client = client
+                    client_classifier.identifier = client_id
+                    client_classifier.save()
 
-                # ViewCode、Sessionを設定して保存
-                view_code_session = view_code_session_form.save(commit=False)
-                view_code_session.code = client_classifier
-                view_code_session.session = session
-                view_code_session.save()
+                    # ViewCode、Sessionを設定して保存
+                    view_code_session = view_code_session_form.save(commit=False)
+                    view_code_session.code = client_classifier
+                    view_code_session.session = session
+                    view_code_session.save()
 
-                save_trade_types(client_classifier, session, view_code_session_form)
+                    save_trade_types(client_classifier, session, view_code_session_form)
 
     else:
         client_form = ClientForm()
         view_code_form = ViewCodeForm()
-        view_code_session_form = ViewCodeSessionForm()
+        view_code_session_formset = ViewCodeSessionFormset(queryset=CodeSession.objects.none())
 
     context = {
         'client_form': client_form,
         'view_code_form': view_code_form,
-        'view_code_session_form': view_code_session_form,
+        'view_code_session_formset': view_code_session_formset,
     }
 
     return render(request, 'clients/add_client.html', context)
+
+
+def validate_client_combo(classifier, client, session, view_code_form, view_code_session_form):
+    """
+    顧客登録を行う上での組み合わせチェックを実行する。
+    エラーがあった場合、エラーメッセージを当該のフォームへ追加する。
+
+    :return: 組み合わせに問題ない場合True、そうでない場合False
+    """
+    is_valid = True
+    if classifier:
+        # 他の顧客と紐づいていないかチェック
+        if client and classifier.client.name != client.name:
+            view_err_msg = f'{classifier.view} is already linked to {classifier.client.name}.'
+            view_code_form.add_error('view', view_err_msg)
+            is_valid = False
+        # ViewCodeとSessionの組み合わせがすでに存在しているかチェック
+        if CodeSession.objects.filter(code=classifier, session=session).exists():
+            session_err_msg = f'The combination of {classifier.code} and {session} is already exists.'
+            view_code_session_form.add_error('session', session_err_msg)
+            is_valid = False
+    return is_valid
 
 
 def get_existing_client(client_name):
